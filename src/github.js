@@ -43,24 +43,49 @@ async function createStatusCheck(repoToken, markupData, conclusion, reportName) 
 }
 
 async function lookForExistingComment(octokit) {
-  const commentsResponse = await octokit.rest.issues.listComments({
-    owner: github.context.repo.owner,
-    repo: github.context.repo.repo,
-    issue_number: github.context.payload.pull_request.number
-  });
+  let hasMoreComments = true;
+  let page = 1;
+  const maxResultsPerPage = 30;
 
-  if (commentsResponse.status !== 200) {
-    core.info(
-      `Failed to list PR comments. Error code: ${commentsResponse.status}.  Will create new comment instead.`
-    );
-    return null;
+  while (hasMoreComments) {
+    const commentsResponse = await octokit.rest.issues.listComments({
+      owner: github.context.repo.owner,
+      repo: github.context.repo.repo,
+      issue_number: github.context.payload.pull_request.number,
+      per_page: maxResultsPerPage,
+      page: page
+    });
+
+    if (commentsResponse.status == 200) {
+      if (commentsResponse.data) {
+        if (commentsResponse.data.length < maxResultsPerPage) {
+          hasMoreComments = false;
+        } else {
+          page += 1;
+        }
+
+        const existingComment = commentsResponse.data.find(c => c.body.startsWith(markupPrefix));
+        if (existingComment) {
+          core.info(
+            `An existing cypress test results comment (${existingComment.id}) was found and will be udpated.`
+          );
+          return existingComment.id;
+        }
+      }
+    } else {
+      core.info(
+        `Failed to list PR comments. Error code: ${commentsResponse.status}.  Will create new comment instead.`
+      );
+      return null;
+    }
   }
 
-  const existingComment = commentsResponse.data.find(c => c.body.startsWith(markupPrefix));
-  if (!existingComment) {
-    core.info('An existing cypress test results comment was not found, create a new one instead.');
-  }
-  return existingComment ? existingComment.id : null;
+  core.info(`Finished getting comments for PR #${github.context.payload.pull_request.number}.`);
+  core.info(
+    'An existing cypress test results comment was not found, will create a new one instead.'
+  );
+
+  return null;
 }
 
 async function createPrComment(repoToken, markupData, updateCommentIfOneExists) {
@@ -79,7 +104,7 @@ async function createPrComment(repoToken, markupData, updateCommentIfOneExists) 
       core.info('Checking for existing comment on PR....');
       existingCommentId = await lookForExistingComment(octokit);
     }
-    ``;
+
     let response;
     let success;
     if (existingCommentId) {
@@ -102,7 +127,7 @@ async function createPrComment(repoToken, markupData, updateCommentIfOneExists) 
       success = response.status === 201;
     }
 
-    let action = existingCommentId ? 'create' : 'update';
+    const action = existingCommentId ? 'create' : 'update';
     if (success) {
       core.info(`PR comment was ${action}d.  ID: ${response.data.id}.`);
     } else {
