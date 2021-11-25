@@ -3,6 +3,8 @@
 This action works in conjunction with another step that runs `cypress run --reporter mochawesome `.  This action takes the generated results json file and creates a Status Check or PR Comment depending on the flags set with the test outcome.  
 
 This action does not run the Cypress tests itself and it can only process one results file at a time.
+    
+## Index 
 
 - [Failures](#failures)
 - [Limitations](#limitations)
@@ -130,7 +132,7 @@ jobs:
       - name: Create Status check based on merged cypress results
         if: always()
         id: process-cypress
-        uses: im-open/process-cypress-test-results@v2.0.2
+        uses: im-open/process-cypress-test-results@v2.0.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           results-file: '${{ env.APP_DIR }}/raw-results.json' # Name set up in npm script `cypressreport`
