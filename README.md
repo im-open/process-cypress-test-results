@@ -132,7 +132,7 @@ jobs:
       - name: Create Status check based on merged cypress results
         if: always()
         id: process-cypress
-        uses: im-open/process-cypress-test-results@v2.0.6
+        uses: im-open/process-cypress-test-results@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           results-file: '${{ env.APP_DIR }}/raw-results.json' # Name set up in npm script `cypressreport`
