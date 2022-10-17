@@ -109,7 +109,7 @@ jobs:
         working-directory: ${{ env.APP_DIR }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Restore npm packages
         run: npm install
@@ -132,7 +132,7 @@ jobs:
       - name: Create Status check based on merged cypress results
         if: always()
         id: process-cypress
-        uses: im-open/process-cypress-test-results@v2.0.6
+        uses: im-open/process-cypress-test-results@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           results-file: '${{ env.APP_DIR }}/raw-results.json' # Name set up in npm script `cypressreport`
