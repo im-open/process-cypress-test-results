@@ -132,6 +132,7 @@ jobs:
       - name: Create Status check based on merged cypress results
         if: always()
         id: process-cypress
+        # You may also reference just the major or major.minor version
         uses: im-open/process-cypress-test-results@v2.1.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
