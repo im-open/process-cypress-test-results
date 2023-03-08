@@ -133,7 +133,7 @@ jobs:
         if: always()
         id: process-cypress
         # You may also reference just the major or major.minor version
-        uses: im-open/process-cypress-test-results@v2.1.2
+        uses: im-open/process-cypress-test-results@v2.1.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           results-file: '${{ env.APP_DIR }}/raw-results.json' # Name set up in npm script `cypressreport`
