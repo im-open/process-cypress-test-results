@@ -1,4 +1,4 @@
-name: 'process-cypress-test-results'
+name: process-cypress-test-results
 
 description: |
   Action that parses a cypress/mochawesome json results file and creates a status check or pr comment with the results.
