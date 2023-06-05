@@ -160,6 +160,7 @@ jobs:
         if: steps.process-cypress.outputs.test-outcome-truncated == 'true'
         run: cat ${{ steps.process-cypress.outputs.test-outcome-file-path }} > $GITHUB_STEP_SUMMARY
 
+      # Optional
       - name: Upload Outcome as artifact if character limit reached
         if: steps.process-cypress.outputs.test-outcome-truncated == 'true'
         uses: actions/upload-artifact@v3.1.1
