@@ -47,8 +47,8 @@ async function run() {
           `Truncating markup data again due to character limit exceeded for github api. Markup data length: ${markupData.length}/${characterLimit}`
         );
         markupData =
-          markupData.substring(0, characterLimit - 100) +
-          '<br/>...Truncated due to character limit.';
+          'Test outcome truncated due to character limit. See full report in output. <br/>' +
+          markupData.substring(0, characterLimit - 100);
       }
     } else {
       core.setOutput('test-outcome-truncated', 'false');
