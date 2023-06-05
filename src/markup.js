@@ -154,7 +154,7 @@ function getFailedTestMarkup(failedTest, suiteName, truncatedMarkup = false) {
        - <b>Title:</b>  ${failedTest.title} <br/>
        - <b>State:</b>  ${failedTest.state} <br/>
        - <b>Status:</b> ${failedTest.status} <br/>
-       Full details truncated. Please see full test report output for error message.
+      ...truncated
     </details>   
     `;
   } else {
