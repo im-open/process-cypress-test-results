@@ -39,6 +39,10 @@ inputs:
 outputs:
   test-outcome:
     description: 'Test outcome based on presence of failing tests: Failed|Passed.  If exceptions are thrown or if it exits early because of argument errors, this is set to Failed.'
+  test-outcome-truncated:
+    description: 'Boolean if test outcome was truncated due to markdown exceeding character limit of 65535.'
+  test-outcome-file-path:
+    description: 'Test Outcome Markdown file path. Primarily used when results exceed 65535 characters which is the status check limit'
 
 runs:
   using: 'node16'
