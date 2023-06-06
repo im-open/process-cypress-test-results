@@ -1,5 +1,5 @@
 const core = require('@actions/core');
-const { readJsonResultsFromFile, areThereAnyFailingTests } = require('./utils');
+const { readJsonResultsFromFile, areThereAnyFailingTests, createOutcomeFile } = require('./utils');
 const { createStatusCheck, createPrComment } = require('./github');
 const { getMarkupForJson } = require('./markup');
 
@@ -26,7 +26,34 @@ async function run() {
 
     const failingTestsFound = areThereAnyFailingTests(resultsJson);
 
-    const markupData = getMarkupForJson(resultsJson, reportName);
+    let markupData = getMarkupForJson(resultsJson, reportName);
+    let fullMarkupData;
+    const characterLimit = 65535;
+
+    if (markupData.length > characterLimit) {
+      core.info(
+        `Truncating markup data due to character limit exceeded for github api.  Markup data length: ${markupData.length}/${characterLimit}`
+      );
+      const outcomeFile = './test-outcome.md';
+      fullMarkupData = markupData;
+      markupData = getMarkupForJson(resultsJson, reportName, true);
+
+      const outcomeFilePath = createOutcomeFile(outcomeFile, fullMarkupData);
+      core.setOutput('test-outcome-truncated', 'true');
+      core.setOutput('test-outcome-file-path', outcomeFilePath);
+
+      if (markupData.length > characterLimit) {
+        core.info(
+          `Truncating markup data again due to character limit exceeded for github api. Markup data length: ${markupData.length}/${characterLimit}`
+        );
+        markupData = markupData.substring(0, characterLimit - 100);
+      }
+      markupData =
+        'Test outcome truncated due to character limit. See full report in output. <br/>' +
+        markupData;
+    } else {
+      core.setOutput('test-outcome-truncated', 'false');
+    }
 
     let conclusion = 'success';
     if (failingTestsFound) {

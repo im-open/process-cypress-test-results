@@ -2434,6 +2434,7 @@ var require_utils2 = __commonJS({
   'src/utils.js'(exports2, module2) {
     var core2 = require_core();
     var fs = require('fs');
+    var path = require('path');
     async function readJsonResultsFromFile2(resultsFile2) {
       core2.info('Reading results from cypress results file....');
       if (fs.existsSync(resultsFile2)) {
@@ -2461,9 +2462,25 @@ var require_utils2 = __commonJS({
       core2.info(`There are no failing tests.`);
       return false;
     }
+    function createOutcomeFile2(outcomeFileName, markupData) {
+      core2.info(`Writing outcome to ${outcomeFileName}`);
+      let outcomeFilePath = null;
+      fs.writeFile(outcomeFileName, markupData, err => {
+        if (err) {
+          core2.info(`Error writing markupData to file. Error: ${err}`);
+        } else {
+          core2.info('Successfully created outcome file.');
+          core2.info(`File: ${outcomeFileName}`);
+        }
+      });
+      outcomeFilePath = path.resolve(outcomeFileName);
+      core2.exportVariable('TEST_OUTCOME_FILE_PATH', outcomeFilePath);
+      return outcomeFilePath;
+    }
     module2.exports = {
       readJsonResultsFromFile: readJsonResultsFromFile2,
-      areThereAnyFailingTests: areThereAnyFailingTests2
+      areThereAnyFailingTests: areThereAnyFailingTests2,
+      createOutcomeFile: createOutcomeFile2
     };
   }
 });
@@ -20520,13 +20537,13 @@ var require_markup = __commonJS({
     var { format, utcToZonedTime } = require_date_fns_tz();
     var timezone = core2.getInput('timezone') || 'Etc/UTC';
     var formatDistance = require_formatDistance2();
-    function getMarkupForJson2(jsonResults, reportName2) {
+    function getMarkupForJson2(jsonResults, reportName2, truncatedMarkup = false) {
       return `
 # ${reportName2}
 ${getBadge(jsonResults.stats)}
 ${getTestTimes(jsonResults.stats)}
 ${getTestCounters(jsonResults.stats)}
-${getTestResultsMarkup(jsonResults.results)}
+${getTestResultsMarkup(jsonResults.results, reportName2, truncatedMarkup)}
   `;
     }
     function getBadge(stats) {
@@ -20618,7 +20635,7 @@ ${getTestResultsMarkup(jsonResults.results)}
       }
       return '';
     }
-    function getTestResultsMarkup(results, reportName2) {
+    function getTestResultsMarkup(results, reportName2, truncatedMarkup = false) {
       let resultsMarkup = '';
       if (!results || results.length === 0) {
         return getNoResultsMarkup(reportName2);
@@ -20631,7 +20648,7 @@ ${getTestResultsMarkup(jsonResults.results)}
           const suiteName = failedSuite.title;
           let failedTests = failedSuite.tests.filter(t => !t.pass);
           failedTests.forEach(failedTest => {
-            resultsMarkup += getFailedTestMarkup(failedTest, suiteName);
+            resultsMarkup += getFailedTestMarkup(failedTest, suiteName, truncatedMarkup);
           });
         });
         return resultsMarkup.trim();
@@ -20645,48 +20662,63 @@ ${getTestResultsMarkup(jsonResults.results)}
   `;
       return resultsMarkup;
     }
-    function getFailedTestMarkup(failedTest, suiteName) {
+    function getFailedTestMarkup(failedTest, suiteName, truncatedMarkup = false) {
       core2.debug(`Processing ${failedTest.title}`);
       let icon = failedTest.state === 'failed' ? ':x:' : ':grey_question:';
-      return `
-<details>
-  <summary>${icon} ${failedTest.fullTitle}</summary>    
-  <table>
-    <tr>
-      <th>Suite:</th>
-      <td><code>${suiteName}</code></td>
-    </tr>
-    <tr>
-      <th>Title:</th>
-      <td><code>${failedTest.title}</code></td>
-    </tr>
-    <tr>
-      <th>State:</th>
-      <td><code>${failedTest.state}</code></td>
-    </tr>
-    <tr>
-      <th>Duration:</th>
-      <td><code>${failedTest.duration}</code></td>
-    </tr>
-    <tr>
-      <th>Status:</th>
-      <td><code>${failedTest.status}</code></td>
-    </tr>
-    <tr>
-      <th>Speed:</th>
-      <td><code>${failedTest.speed || 'N/A'}</code></td>
-    </tr>
-    <tr>
-      <th>Code:</th>
-      <td><code>${failedTest.code}</code></td>
-    </tr>
-    <tr>
-      <th>Failure Messages:</th>
-      <td><pre>${failedTest.err.estack}</pre></td>
-    </tr>
-  </table>
-</details>
-  `.trim();
+      let failTestMarkdown;
+      if (truncatedMarkup) {
+        failTestMarkdown = `
+    <details>
+      <summary>${icon} ${failedTest.fullTitle}</summary>
+       - <b>Suite:</b> ${suiteName} <br/>
+       - <b>Title:</b>  ${failedTest.title} <br/>
+       - <b>State:</b>  ${failedTest.state} <br/>
+       - <b>Status:</b> ${failedTest.status} <br/>
+      ...truncated
+    </details>   
+    `;
+      } else {
+        failTestMarkdown = `
+  <details>
+    <summary>${icon} ${failedTest.fullTitle}</summary>    
+    <table>
+      <tr>
+        <th>Suite:</th>
+        <td><code>${suiteName}</code></td>
+      </tr>
+      <tr>
+        <th>Title:</th>
+        <td><code>${failedTest.title}</code></td>
+      </tr>
+      <tr>
+        <th>State:</th>
+        <td><code>${failedTest.state}</code></td>
+      </tr>
+      <tr>
+        <th>Duration:</th>
+        <td><code>${failedTest.duration}</code></td>
+      </tr>
+      <tr>
+        <th>Status:</th>
+        <td><code>${failedTest.status}</code></td>
+      </tr>
+      <tr>
+        <th>Speed:</th>
+        <td><code>${failedTest.speed || 'N/A'}</code></td>
+      </tr>
+      <tr>
+        <th>Code:</th>
+        <td><code>${failedTest.code}</code></td>
+      </tr>
+      <tr>
+        <th>Failure Messages:</th>
+        <td><pre>${failedTest.err.estack}</pre></td>
+      </tr>
+    </table>
+  </details>
+    `;
+      }
+      return failTestMarkdown.trim();
     }
     module2.exports = {
       getMarkupForJson: getMarkupForJson2
@@ -20696,7 +20728,7 @@ ${getTestResultsMarkup(jsonResults.results)}
 
 // src/main.js
 var core = require_core();
-var { readJsonResultsFromFile, areThereAnyFailingTests } = require_utils2();
+var { readJsonResultsFromFile, areThereAnyFailingTests, createOutcomeFile } = require_utils2();
 var { createStatusCheck, createPrComment } = require_github2();
 var { getMarkupForJson } = require_markup();
 var requiredArgOptions = {
@@ -20718,7 +20750,31 @@ async function run() {
       return;
     }
     const failingTestsFound = areThereAnyFailingTests(resultsJson);
-    const markupData = getMarkupForJson(resultsJson, reportName);
+    let markupData = getMarkupForJson(resultsJson, reportName);
+    let fullMarkupData;
+    const characterLimit = 65535;
+    if (markupData.length > characterLimit) {
+      core.info(
+        `Truncating markup data due to character limit exceeded for github api.  Markup data length: ${markupData.length}/${characterLimit}`
+      );
+      const outcomeFile = './test-outcome.md';
+      fullMarkupData = markupData;
+      markupData = getMarkupForJson(resultsJson, reportName, true);
+      const outcomeFilePath = createOutcomeFile(outcomeFile, fullMarkupData);
+      core.setOutput('test-outcome-truncated', 'true');
+      core.setOutput('test-outcome-file-path', outcomeFilePath);
+      if (markupData.length > characterLimit) {
+        core.info(
+          `Truncating markup data again due to character limit exceeded for github api. Markup data length: ${markupData.length}/${characterLimit}`
+        );
+        markupData = markupData.substring(0, characterLimit - 100);
+      }
+      markupData =
+        'Test outcome truncated due to character limit. See full report in output. <br/>' +
+        markupData;
+    } else {
+      core.setOutput('test-outcome-truncated', 'false');
+    }
     let conclusion = 'success';
     if (failingTestsFound) {
       conclusion = ignoreTestFailures ? 'neutral' : 'failure';

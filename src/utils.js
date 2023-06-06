@@ -1,5 +1,6 @@
 const core = require('@actions/core');
 const fs = require('fs');
+const path = require('path');
 
 async function readJsonResultsFromFile(resultsFile) {
   core.info('Reading results from cypress results file....');
@@ -32,7 +33,26 @@ function areThereAnyFailingTests(json) {
   return false;
 }
 
+function createOutcomeFile(outcomeFileName, markupData) {
+  core.info(`Writing outcome to ${outcomeFileName}`);
+  let outcomeFilePath = null;
+
+  fs.writeFile(outcomeFileName, markupData, err => {
+    if (err) {
+      core.info(`Error writing markupData to file. Error: ${err}`);
+    } else {
+      core.info('Successfully created outcome file.');
+      core.info(`File: ${outcomeFileName}`);
+    }
+  });
+  outcomeFilePath = path.resolve(outcomeFileName);
+  core.exportVariable('TEST_OUTCOME_FILE_PATH', outcomeFilePath);
+
+  return outcomeFilePath;
+}
+
 module.exports = {
   readJsonResultsFromFile,
-  areThereAnyFailingTests
+  areThereAnyFailingTests,
+  createOutcomeFile
 };

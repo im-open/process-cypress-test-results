@@ -3,13 +3,13 @@ const { format, utcToZonedTime } = require('date-fns-tz');
 const timezone = core.getInput('timezone') || 'Etc/UTC';
 const formatDistance = require('date-fns/formatDistance');
 
-function getMarkupForJson(jsonResults, reportName) {
+function getMarkupForJson(jsonResults, reportName, truncatedMarkup = false) {
   return `
 # ${reportName}
 ${getBadge(jsonResults.stats)}
 ${getTestTimes(jsonResults.stats)}
 ${getTestCounters(jsonResults.stats)}
-${getTestResultsMarkup(jsonResults.results)}
+${getTestResultsMarkup(jsonResults.results, reportName, truncatedMarkup)}
   `;
 }
 
@@ -110,7 +110,7 @@ function getTableRowIfHasValue(heading, data) {
   return '';
 }
 
-function getTestResultsMarkup(results, reportName) {
+function getTestResultsMarkup(results, reportName, truncatedMarkup = false) {
   let resultsMarkup = '';
 
   if (!results || results.length === 0) {
@@ -125,7 +125,7 @@ function getTestResultsMarkup(results, reportName) {
       const suiteName = failedSuite.title;
       let failedTests = failedSuite.tests.filter(t => !t.pass);
       failedTests.forEach(failedTest => {
-        resultsMarkup += getFailedTestMarkup(failedTest, suiteName);
+        resultsMarkup += getFailedTestMarkup(failedTest, suiteName, truncatedMarkup);
       });
     });
     return resultsMarkup.trim();
@@ -141,49 +141,64 @@ function getNoResultsMarkup(reportName) {
   return resultsMarkup;
 }
 
-function getFailedTestMarkup(failedTest, suiteName) {
+function getFailedTestMarkup(failedTest, suiteName, truncatedMarkup = false) {
   core.debug(`Processing ${failedTest.title}`);
 
   let icon = failedTest.state === 'failed' ? ':x:' : ':grey_question:';
-  return `
-<details>
-  <summary>${icon} ${failedTest.fullTitle}</summary>    
-  <table>
-    <tr>
-      <th>Suite:</th>
-      <td><code>${suiteName}</code></td>
-    </tr>
-    <tr>
-      <th>Title:</th>
-      <td><code>${failedTest.title}</code></td>
-    </tr>
-    <tr>
-      <th>State:</th>
-      <td><code>${failedTest.state}</code></td>
-    </tr>
-    <tr>
-      <th>Duration:</th>
-      <td><code>${failedTest.duration}</code></td>
-    </tr>
-    <tr>
-      <th>Status:</th>
-      <td><code>${failedTest.status}</code></td>
-    </tr>
-    <tr>
-      <th>Speed:</th>
-      <td><code>${failedTest.speed || 'N/A'}</code></td>
-    </tr>
-    <tr>
-      <th>Code:</th>
-      <td><code>${failedTest.code}</code></td>
-    </tr>
-    <tr>
-      <th>Failure Messages:</th>
-      <td><pre>${failedTest.err.estack}</pre></td>
-    </tr>
-  </table>
-</details>
-  `.trim();
+  let failTestMarkdown;
+  if (truncatedMarkup) {
+    failTestMarkdown = `
+    <details>
+      <summary>${icon} ${failedTest.fullTitle}</summary>
+       - <b>Suite:</b> ${suiteName} <br/>
+       - <b>Title:</b>  ${failedTest.title} <br/>
+       - <b>State:</b>  ${failedTest.state} <br/>
+       - <b>Status:</b> ${failedTest.status} <br/>
+      ...truncated
+    </details>   
+    `;
+  } else {
+    failTestMarkdown = `
+  <details>
+    <summary>${icon} ${failedTest.fullTitle}</summary>    
+    <table>
+      <tr>
+        <th>Suite:</th>
+        <td><code>${suiteName}</code></td>
+      </tr>
+      <tr>
+        <th>Title:</th>
+        <td><code>${failedTest.title}</code></td>
+      </tr>
+      <tr>
+        <th>State:</th>
+        <td><code>${failedTest.state}</code></td>
+      </tr>
+      <tr>
+        <th>Duration:</th>
+        <td><code>${failedTest.duration}</code></td>
+      </tr>
+      <tr>
+        <th>Status:</th>
+        <td><code>${failedTest.status}</code></td>
+      </tr>
+      <tr>
+        <th>Speed:</th>
+        <td><code>${failedTest.speed || 'N/A'}</code></td>
+      </tr>
+      <tr>
+        <th>Code:</th>
+        <td><code>${failedTest.code}</code></td>
+      </tr>
+      <tr>
+        <th>Failure Messages:</th>
+        <td><pre>${failedTest.err.estack}</pre></td>
+      </tr>
+    </table>
+  </details>
+    `;
+  }
+  return failTestMarkdown.trim();
 }
 
 module.exports = {
