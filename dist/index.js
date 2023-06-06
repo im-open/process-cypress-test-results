@@ -20763,7 +20763,7 @@ async function run() {
       const outcomeFilePath = createOutcomeFile(outcomeFile, fullMarkupData);
       core.setOutput('test-outcome-truncated', 'true');
       core.setOutput('test-outcome-file-path', outcomeFilePath);
-      if (markupData.length > 65535) {
+      if (markupData.length > characterLimit) {
         core.info(
           `Truncating markup data again due to character limit exceeded for github api. Markup data length: ${markupData.length}/${characterLimit}`
         );
