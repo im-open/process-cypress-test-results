@@ -86,6 +86,7 @@ For failed test runs you can expand each failed test and view more details about
    - mochawesome-merge
    - mochawesome-report-generator
 2. Some npm scripts have also been added to the project
+
    ```json
    "scripts": {
      "precypressrun": "rm -rf mochawesome-report/",
@@ -93,6 +94,7 @@ For failed test runs you can expand each failed test and view more details about
      "cypressreport": "mochawesome-merge mochawesome-report/*.json > raw-results.json && marge --reportDir cypress-results raw-results.json"
    }
    ```
+
    - `cypressrun`:
      - `overwrite=false`: This flag is set to false so a separate json file is created per test/suite. If not set, each test overwrites the previous test results so a comprehensive report cannot be generated.
      - `html=false`: This tells _mochawesome_ not to generate an html report since we'll be doing that after the test run.
