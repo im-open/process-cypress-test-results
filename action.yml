@@ -45,5 +45,5 @@ outputs:
     description: 'Test Outcome Markdown file path. Primarily used when results exceed 65535 characters which is the status check limit'
 
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'

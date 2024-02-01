@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm ci && esbuild ./src/main.js --bundle --platform=node --outfile=dist/index.js && npm run format",
-    "bundle": "esbuild ./src/main.js --bundle --platform=node --outfile=dist/index.js",
+    "build": "npm ci && npm run bundle && npm run format",
+    "bundle": "esbuild ./src/main.js --bundle --platform=node --outfile=dist/index.js --tsconfig-raw='{}'",
     "format": "prettier --write **/*.js",
     "format-check": "prettier --check **/*.js"
   },
@@ -19,7 +19,7 @@
     "date-fns-tz": "^1.1.4"
   },
   "devDependencies": {
-    "esbuild": "^0.12.8",
+    "esbuild": "^0.20.0",
     "install": "^0.13.0",
     "prettier": "^2.3.0"
   }

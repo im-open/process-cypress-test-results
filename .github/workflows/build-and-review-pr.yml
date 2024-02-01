@@ -39,6 +39,7 @@ jobs:
       action-name: ${{ github.repository }}
       default-branch: main
       readme-name: 'README.md'
+      node-version: 20
 
       # The id of the contribution guidelines section of the README.md
       readme-contribution-id: '#contributing'
