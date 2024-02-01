@@ -1,6 +1,10 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const markupPrefix = '<!-- im-open/process-cypress-test-results -->';
+// This is the ID of the step that is running the action:
+// https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
+const stepId = process.env.GITHUB_ACTION || '';
+const jobId = process.env.GITHUB_JOB || '';
+const markupPrefix = `<!-- im-open/process-cypress-test-results ${jobId}:${stepId} -->`;
 
 async function createStatusCheck(repoToken, markupData, conclusion, reportName) {
   core.info(`Creating Status check for ${reportName}...`);
