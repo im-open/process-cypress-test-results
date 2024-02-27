@@ -2,7 +2,6 @@ const core = require('@actions/core');
 const { readJsonResultsFromFile, areThereAnyFailingTests, createResultsFile } = require('./utils');
 const { createStatusCheck, createPrComment } = require('./github');
 const { getMarkupForJson } = require('./markup');
-const fs = require('fs');
 
 const requiredArgOptions = {
   required: true,

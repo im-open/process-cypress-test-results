@@ -565,7 +565,7 @@ var require_file_command = __commonJS({
       };
     Object.defineProperty(exports2, '__esModule', { value: true });
     exports2.prepareKeyValueMessage = exports2.issueFileCommand = void 0;
-    var fs2 = __importStar(require('fs'));
+    var fs = __importStar(require('fs'));
     var os = __importStar(require('os'));
     var uuid_1 = (init_esm_node(), __toCommonJS(esm_node_exports));
     var utils_1 = require_utils();
@@ -574,10 +574,10 @@ var require_file_command = __commonJS({
       if (!filePath) {
         throw new Error(`Unable to find environment variable for file command ${command}`);
       }
-      if (!fs2.existsSync(filePath)) {
+      if (!fs.existsSync(filePath)) {
         throw new Error(`Missing file at path: ${filePath}`);
       }
-      fs2.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
+      fs.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
         encoding: 'utf8'
       });
     }
@@ -18968,12 +18968,12 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 var require_utils3 = __commonJS({
   'src/utils.js'(exports2, module2) {
     var core2 = require_core();
-    var fs2 = require('fs');
+    var fs = require('fs');
     var path = require('path');
     async function readJsonResultsFromFile2(resultsFile2) {
       core2.info('Reading results from cypress results file....');
-      if (fs2.existsSync(resultsFile2)) {
-        const rawJson = fs2.readFileSync(resultsFile2, 'utf8');
+      if (fs.existsSync(resultsFile2)) {
+        const rawJson = fs.readFileSync(resultsFile2, 'utf8');
         if (!rawJson) {
           core2.info(
             `The results file '${resultsFile2}' does not contain any data.  No status check or PR comment will be created.`
@@ -19003,7 +19003,7 @@ Checking for failing tests..`);
       core2.info(`
 Writing results to ${resultsFileName}`);
       let resultsFilePath = null;
-      fs2.writeFile(resultsFileName, results, err => {
+      fs.writeFile(resultsFileName, results, err => {
         if (err) {
           core2.info(`Error writing results to file. Error: ${err}`);
         } else {
@@ -37268,6 +37268,7 @@ ${getFailedAndEmptyTestResultsMarkup(jsonResults.results, reportName2, truncated
       const testResultIcon = ':grey_question:';
       const resultsMarkup = `
 ## ${testResultIcon} ${reportName2}
+
 There were no test results to report.
 `;
       return resultsMarkup;
@@ -37338,7 +37339,6 @@ var core = require_core();
 var { readJsonResultsFromFile, areThereAnyFailingTests, createResultsFile } = require_utils3();
 var { createStatusCheck, createPrComment } = require_github2();
 var { getMarkupForJson } = require_markup();
-var fs = require('fs');
 var requiredArgOptions = {
   required: true,
   trimWhitespace: true

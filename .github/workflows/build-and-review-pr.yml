@@ -109,6 +109,7 @@ jobs:
           ./test/assert-value-is-empty.sh --name "test-outcome output" --value "${{ steps.missing-github-token.outputs.test-outcome }}"
           ./test/assert-value-is-empty.sh --name "test-results-truncated output" --value "${{ steps.missing-github-token.outputs.test-results-truncated }}"
           ./test/assert-value-is-empty.sh --name "test-results-file-path output" --value "${{ steps.missing-github-token.outputs.test-results-file-path }}"
+          ./test/assert-value-is-empty.sh --name "TEST_RESULTS_FILE_PATH env var" --value "${{ env.TEST_RESULTS_FILE_PATH }}"
           ./test/assert-value-is-empty.sh --name "status-check-id output" --value "${{ steps.missing-github-token.outputs.status-check-id }}"
           ./test/assert-value-is-empty.sh --name "pr-comment-id output" --value "${{ steps.missing-github-token.outputs.pr-comment-id }}"
 
@@ -136,6 +137,7 @@ jobs:
           ./test/assert-value-is-empty.sh --name "test-outcome output" --value "${{ steps.missing-results-file.outputs.test-outcome }}"
           ./test/assert-value-is-empty.sh --name "test-results-truncated output" --value "${{ steps.missing-results-file.outputs.test-results-truncated }}"
           ./test/assert-value-is-empty.sh --name "test-results-file-path output" --value "${{ steps.missing-results-file.outputs.test-results-file-path }}"
+          ./test/assert-value-is-empty.sh --name "TEST_RESULTS_FILE_PATH env var" --value "${{ env.TEST_RESULTS_FILE_PATH }}"
           ./test/assert-value-is-empty.sh --name "status-check-id output" --value "${{ steps.missing-results-file.outputs.status-check-id }}"
           ./test/assert-value-is-empty.sh --name "pr-comment-id output" --value "${{ steps.missing-results-file.outputs.pr-comment-id }}"
 
@@ -169,6 +171,7 @@ jobs:
         run: |
           ./test/assert-value-is-empty.sh --name "test-results-truncated output" --value "${{ steps.file-does-not-exist.outputs.test-results-truncated }}"
           ./test/assert-value-is-empty.sh --name "test-results-file-path output" --value "${{ steps.file-does-not-exist.outputs.test-results-file-path }}"
+          ./test/assert-value-is-empty.sh --name "TEST_RESULTS_FILE_PATH env var" --value "${{ env.TEST_RESULTS_FILE_PATH }}"
           ./test/assert-value-is-empty.sh --name "status-check-id output" --value "${{ steps.file-does-not-exist.outputs.status-check-id }}"
           ./test/assert-value-is-empty.sh --name "pr-comment-id output" --value "${{ steps.file-does-not-exist.outputs.pr-comment-id }}"
 
@@ -201,11 +204,14 @@ jobs:
         run: |
           ./test/assert-value-is-empty.sh --name "test-results-truncated output" --value "${{ steps.empty-file.outputs.test-results-truncated }}"
           ./test/assert-value-is-empty.sh --name "test-results-file-path output" --value "${{ steps.empty-file.outputs.test-results-file-path }}"
+          ./test/assert-value-is-empty.sh --name "TEST_RESULTS_FILE_PATH env var" --value "${{ env.TEST_RESULTS_FILE_PATH }}"
           ./test/assert-value-is-empty.sh --name "status-check-id output" --value "${{ steps.empty-file.outputs.status-check-id }}"
           ./test/assert-value-is-empty.sh --name "pr-comment-id output" --value "${{ steps.empty-file.outputs.pr-comment-id }}"
 
-      - name: '-------------------------------------------------------------------------------------------------------------'
-        run: echo ""
+      - name: '--------------------------------------------------------------------------------------------------------------'
+        run: |
+          echo ""
+          echo "TEST_RESULTS_FILE_PATH=" >> "$GITHUB_ENV"
       - name: '                                           TEST 5 - PASSING TESTS                                            '
         run: echo ""
 
@@ -230,9 +236,11 @@ jobs:
         run: |
           ./test/assert-values-match.sh --name "test-outcome output" --expected 'Passed' --actual "${{ steps.passing-tests.outputs.test-outcome }}"
 
-      - name: 5 - And the 'test-results-file-path output' should be populated
+      - name: 5 - And the 'test-results-file-path output & env var' should be populated
         if: always()
-        run: ./test/assert-value-is-not-empty.sh --name "test-results-file-path output" --value "${{ steps.passing-tests.outputs.test-results-file-path }}"
+        run: |
+          ./test/assert-value-is-not-empty.sh --name "test-results-file-path output" --value "${{ steps.passing-tests.outputs.test-results-file-path }}"
+          ./test/assert-value-is-not-empty.sh --name "TEST_RESULTS_FILE_PATH env var" --value "${{ env.TEST_RESULTS_FILE_PATH }}"
 
       - name: 5 - And the remaining outputs should be empty since status checks and pr comments were not created
         if: always()
@@ -255,8 +263,10 @@ jobs:
           actualFileName="${{ steps.passing-tests.outputs.test-results-file-path }}"
           ./test/assert-file-contents-match.sh --expectedFileName $expectedFileName --actualFileName $actualFileName
 
-      - name: '-------------------------------------------------------------------------------------------------------------'
-        run: echo ""
+      - name: '--------------------------------------------------------------------------------------------------------------'
+        run: |
+          echo ""
+          echo "TEST_RESULTS_FILE_PATH=" >> "$GITHUB_ENV"
       - name: '                                           TEST 6 - FAILING TESTS                                            '
         run: echo ""
 
@@ -281,9 +291,11 @@ jobs:
         run: |
           ./test/assert-values-match.sh --name "test-outcome output" --expected 'Failed' --actual "${{ steps.failing-tests.outputs.test-outcome }}"
 
-      - name: 6 - And the 'test-results-file-path output' should be populated
+      - name: 6 - And the 'test-results-file-path output & env var' should be populated
         if: always()
-        run: ./test/assert-value-is-not-empty.sh --name "test-results-file-path output" --value "${{ steps.failing-tests.outputs.test-results-file-path }}"
+        run: |
+          ./test/assert-value-is-not-empty.sh --name "test-results-file-path output" --value "${{ steps.failing-tests.outputs.test-results-file-path }}"
+          ./test/assert-value-is-not-empty.sh --name "TEST_RESULTS_FILE_PATH env var" --value "${{ env.TEST_RESULTS_FILE_PATH }}"
 
       - name: 6 - And the remaining outputs should be empty since status checks and pr comments were not created
         if: always()
@@ -307,8 +319,10 @@ jobs:
           actualFileName="${{ steps.failing-tests.outputs.test-results-file-path }}"
           ./test/assert-file-contents-match.sh --expectedFileName $expectedFileName --actualFileName $actualFileName
 
-      - name: '-------------------------------------------------------------------------------------------------------------'
-        run: echo ""
+      - name: '--------------------------------------------------------------------------------------------------------------'
+        run: |
+          echo ""
+          echo "TEST_RESULTS_FILE_PATH=" >> "$GITHUB_ENV"
       - name: '                                         TEST 7 - NO TESTS REPORTED                                          '
         run: echo ""
 
@@ -332,9 +346,11 @@ jobs:
         run: |
           ./test/assert-values-match.sh --name "test-outcome output" --expected 'Passed' --actual "${{ steps.no-tests.outputs.test-outcome }}"
 
-      - name: 7 - And the 'test-results-file-path output' should be populated
+      - name: 7 - And the 'test-results-file-path output & env var' should be populated
         if: always()
-        run: ./test/assert-value-is-not-empty.sh --name "test-results-file-path output" --value "${{ steps.no-tests.outputs.test-results-file-path }}"
+        run: |
+          ./test/assert-value-is-not-empty.sh --name "test-results-file-path output" --value "${{ steps.no-tests.outputs.test-results-file-path }}"
+          ./test/assert-value-is-not-empty.sh --name "TEST_RESULTS_FILE_PATH env var" --value "${{ env.TEST_RESULTS_FILE_PATH }}"
 
       - name: 7 - And the remaining outputs should be empty since status checks and pr comments were not created
         if: always()

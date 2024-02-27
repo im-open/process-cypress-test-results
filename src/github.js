@@ -1,7 +1,5 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-// This is the ID of the step that is running the action:
-// https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
 
 async function createStatusCheck(repoToken, markupData, conclusion, reportName) {
   core.info(`\nCreating Status check for ${reportName}...`);
@@ -9,11 +7,11 @@ async function createStatusCheck(repoToken, markupData, conclusion, reportName) 
 
   const git_sha =
     github.context.eventName === 'pull_request' ? github.context.payload.pull_request.head.sha : github.context.sha;
-
   const name = `status check - ${reportName.toLowerCase()}`;
   const status = 'completed';
   const checkTime = new Date().toUTCString();
   const summary = `This test run completed at \`${checkTime}\``;
+
   const propMessage = `  Name: ${name}
   GitSha: ${git_sha}
   Event: ${github.context.eventName}

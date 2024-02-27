@@ -129,6 +129,7 @@ function getNoResultsMarkup(reportName) {
   const testResultIcon = ':grey_question:';
   const resultsMarkup = `
 ## ${testResultIcon} ${reportName}
+
 There were no test results to report.
 `;
   return resultsMarkup;
