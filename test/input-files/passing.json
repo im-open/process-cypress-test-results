@@ -1,0 +1,148 @@
+{
+  "stats": {
+    "suites": 5,
+    "tests": 6,
+    "passes": 6,
+    "pending": 0,
+    "failures": 0,
+    "testsRegistered": 6,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false,
+    "start": "2024-02-27T20:25:44.651Z",
+    "end": "2024-02-27T20:26:27.991Z",
+    "duration": 43340
+  },
+  "results": [
+    {
+      "suites": [
+        {
+          "tests": [
+            {
+              "title": "shows an error notification when there is an error loading the account",
+              "fullTitle": "account loading error shows an error notification when there is an error loading the account",
+              "duration": 6769,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "code": "cy.intercept('/home/api/account**', {\n  statusCode: 500,\n  body: ''\n}).as('getaccount');\ncy.visit('/home/', {\n  timeout: 120000\n});\ncy.wait('@getaccount', {\n  timeout: 120000\n});\ncy.findByText('An error occurred', {\n  timeout: 120000\n}).should('be.visible');\ncy.findByText(/We're sorry, one of our systems/).should('be.visible');",
+              "err": {}
+            }
+          ],
+          "passes": [
+            "3b619663-a733-437f-a220-bf79be6773ac"
+          ],
+          "failures": []
+        }
+      ]
+    },
+    {
+      "suites": [
+        {
+          "tests": [
+            {
+              "title": "a small account should be displayed",
+              "fullTitle": "account menu a small account should be displayed",
+              "duration": 5212,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "code": "cy.fixture('threePersonaccount.json').then(account => {\n  cy.intercept('/home/api/account**', {\n    statusCode: 500,\n    body: account\n  }).as('getaccount');\n});\ncy.visit('/', {\n  timeout: 120000\n});\ncy.wait('@getaccount');\ncy.findByText('CypressHeadOfHouse').should('be.visible');\ncy.findByText('CypressSpouse').should('be.visible');\ncy.findByText('CypressChild').should('be.visible');",
+              "err": {}
+            },
+            {
+              "title": "a large account should be displayed with the ability to scroll through them all",
+              "fullTitle": "account menu a large account should be displayed with the ability to scroll through them all",
+              "duration": 7456,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "code": "cy.fixture('tenPersonaccount.json').then(account => {\n  cy.intercept('/home/api/account**', {\n    statusCode: 200,\n    body: account\n  }).as('getaccount');\n});\ncy.intercept('/hipaa-auth/api/**', {\n  statusCode: 200,\n  body: ''\n}).as('getHIPAAAuth');\ncy.intercept('/plan-recommendation/api/**', {\n  statusCode: 200,\n  body: ''\n}).as('getPlanRecommendation');\ncy.intercept('/ifp/assessment/api/**', {\n  statusCode: 200,\n  body: ''\n}).as('getAssessment');\ncy.intercept('/client-implementations/api/**', {\n  statusCode: 200,\n  body: ''\n}).as('getClientImplementations');\ncy.visit('/', {\n  timeout: 120000\n});\ncy.wait('@getaccount');\ncy.viewport(999, 660);\ncy.viewport(1000, 660);\ncy.findByText('CypressHeadOfHouse').should('be.visible');\ncy.findByText('CypressSpouse').should('be.visible');\ncy.findByText('CypressChild First').should('be.visible');\ncy.findByText('CypressChild Second').should('be.visible');\ncy.findByText('CypressChild Third').should('be.visible');\ncy.findByText('CypressChild Fourth').should('be.visible');\ncy.findByText('CypressChild Fifth').should('be.visible');\ncy.findByText('CypressChild Sixth').should('be.visible');\ncy.findByText('CypressChild Seventh').should('not.be.visible');\ncy.findByText('CypressChild Eighth').should('not.be.visible'); // get the right arrow that scrolls through the family members\n// click twice to get all the way to the right\ncy.get('i.bds-icon.bds-chevron-right').click();\ncy.findByText('CypressHeadOfHouse').should('not.be.visible');\ncy.findByText('CypressSpouse').should('not.be.visible');\ncy.findByText('CypressChild First').should('be.visible');\ncy.findByText('CypressChild Second').should('be.visible');\ncy.findByText('CypressChild Third').should('be.visible');\ncy.findByText('CypressChild Fourth').should('be.visible');\ncy.findByText('CypressChild Fifth').should('be.visible');\ncy.findByText('CypressChild Sixth').should('be.visible');\ncy.findByText('CypressChild Seventh').should('be.visible');\ncy.findByText('CypressChild Eighth').should('be.visible'); // get the left arrow that scrolls through the family members\n// click twice to get all the way to the left\ncy.get('i.bds-icon.bds-chevron-left').click();\ncy.findByText('CypressHeadOfHouse').should('be.visible');\ncy.findByText('CypressSpouse').should('be.visible');\ncy.findByText('CypressChild First').should('be.visible');\ncy.findByText('CypressChild Second').should('be.visible');\ncy.findByText('CypressChild Third').should('be.visible');\ncy.findByText('CypressChild Fourth').should('be.visible');\ncy.findByText('CypressChild Fifth').should('be.visible');\ncy.findByText('CypressChild Sixth').should('be.visible');\ncy.findByText('CypressChild Seventh').should('not.be.visible');\ncy.findByText('CypressChild Eighth').should('not.be.visible');",
+              "err": {}
+            }
+          ],
+          "passes": [
+            "703b5b03-2d6d-4eec-894b-c15368c308d9",
+            "99a1c8a6-65fc-4c4b-b75f-321cfe6050b5"
+          ],
+          "failures": []
+        }
+      ]
+    },
+    {
+      "suites": [
+        {
+          "tests": [
+            {
+              "title": "has the qualtrics div",
+              "fullTitle": "qualtrics has the qualtrics div",
+              "duration": 10142,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "code": "cy.fixture('threePersonaccount.json').then(account => {\n  cy.intercept('/home/api/account**', {\n    statusCode: 500,\n    body: account\n  }).as('getaccount');\n});\ncy.visit('/', {\n  timeout: 120000\n});\ncy.wait('@getaccount');\ncy.get('script[src*=qualtrics-snippet]').should('exist');\ncy.get('#ZN_0x5xjcuK1qVGfs1').should('exist');",
+              "err": {}
+            }
+          ],
+          "passes": [
+            "04ad088b-bcad-4a64-b0db-bab7152f6966"
+          ],
+          "failures": []
+        }
+      ]
+    },
+    {
+      "suites": [
+        {
+          "tests": [
+            {
+              "title": "banner should be displayed welcome message",
+              "fullTitle": "Welcome Banner banner should be displayed welcome message",
+              "duration": 4808,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "code": "cy.visit('/', {\n  timeout: 120000\n});\ncy.findByText('Home').should('be.visible');",
+              "err": {}
+            }
+          ],
+          "passes": [
+            "54aea388-192c-4bd3-8517-29e2c2616123"
+          ],
+          "failures": []
+        }
+      ]
+    },
+    {
+      "suites": [
+        {
+          "tests": [
+            {
+              "title": "has no accessibility issues",
+              "fullTitle": "Homepage Accessibility has no accessibility issues",
+              "duration": 2291,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "code": "const externalRightHandRoutes = ['shop', 'participant-guidance', 'account', 'plan-recommendation', 'funding(-election)?', 'account', 'policies', 'hipaa-auth'];\ncy.intercept(new RegExp(`/(${externalRightHandRoutes.join('|')})/.*.js`), {\n  statusCode: 404,\n  body: 'not found'\n});\ncy.fixture('tenPersonaccount.json').then(account => {\n  cy.intercept('/home/api/account**', {\n    statusCode: 200,\n    body: account\n  }).as('getaccount');\n});\ncy.visit('/', {\n  timeout: 120000\n});\ncy.wait('@getaccount');\ncy.injectAxe();\ncy.checkA11y('#main-content', null, violations => {\n  if (!violations.length) return;\n  const errorMessages = violations.map(({\n    nodes,\n    impact,\n    id\n  }) => `[${impact}] ${nodes.length} instance(s) of ${id} violations:\\n${nodes.map(({\n    target\n  }) => target).join('\\n')}`);\n  assert.fail(errorMessages.join('\\n\\n'));\n}, false);",
+              "err": {}
+            }
+          ],
+          "passes": [
+            "127d2747-9280-47a7-9e15-b480dfaa853a"
+          ],
+          "failures": []
+        }
+      ]
+    }
+  ]
+}

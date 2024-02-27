@@ -1,0 +1,61 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 1,
+    "pending": 0,
+    "failures": 1,
+    "testsRegistered": 2,
+    "passPercent": 50,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false,
+    "start": "2024-02-27T20:42:36.471Z",
+    "end": "2024-02-27T20:44:46.487Z",
+    "duration": 130016
+  },
+  "results": [
+    {
+      "suites": [
+        {
+          "tests": [
+            {
+              "title": "shows an error notification when there is an error loading the account",
+              "fullTitle": "account loading error shows an error notification when there is an error loading the account",
+              "duration": 6907,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "code": "cy.intercept('/home/api/account**', {\n  statusCode: 500,\n  body: ''\n}).as('getaccount');\ncy.visit('/homez/', {\n  timeout: 120000\n});\ncy.wait('@getHouzehold', {\n  timeout: 120000\n});\ncy.findByText('An error occurred', {\n  timeout: 120000\n}).should('be.visible');\ncy.findByText(/We're sorry, one of our systems/).should('be.visible');",
+              "err": {
+                "message": "CypressError: `cy.wait()` could not find a registered alias for: `@getHouzehold`.\nAvailable aliases are: `getaccount, getCart`.",
+                "estack": "CypressError: `cy.wait()` could not find a registered alias for: `@getHouzehold`.\nAvailable aliases are: `getaccount, getCart`.\n    at $Cy.aliasNotFoundFor (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:154884:74)\n    at $Cy.getAlias (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:154818:12)\n    at waitForXhr (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:167461:23)\n    at https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:167592:14\n    at tryCatcher (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:13022:23)\n    at MappingPromiseArray._promiseFulfilled (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:10142:38)\n    at MappingPromiseArray.PromiseArray._iterate (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:11344:31)\n    at MappingPromiseArray.init (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:11308:10)\n    at MappingPromiseArray._asyncInit (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:10111:10)\n    at _drainQueueStep (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:7733:12)\n    at _drainQueue (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:7722:9)\n    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:7738:5)\n    at Async.drainQueues (https://app.dev.viabenefits.com/__cypress/runner/cypress_runner.js:7608:14)\nFrom Your Spec Code:\n    at Context.eval (https://app.dev.viabenefits.com/__cypress/tests?p=cypress/integration/frontend-only/accountLoadingError.js:112:8)",
+                "diff": null
+              }
+            },
+            {
+              "title": "a large account should be displayed with the ability to scroll through them all",
+              "fullTitle": "account menu a large account should be displayed with the ability to scroll through them all",
+              "duration": 6974,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "code": "cy.fixture('tenPersonaccount.json').then(account => {\n  cy.intercept('/home/api/account**', {\n    statusCode: 200,\n    body: account\n  }).as('getaccount');\n});\ncy.intercept('/hipaa-auth/api/**', {\n  statusCode: 200,\n  body: ''\n}).as('getHIPAAAuth');\ncy.intercept('/plan-recommendation/api/**', {\n  statusCode: 200,\n  body: ''\n}).as('getPlanRecommendation');\ncy.intercept('/ifp/assessment/api/**', {\n  statusCode: 200,\n  body: ''\n}).as('getAssessment');\ncy.intercept('/client-implementations/api/**', {\n  statusCode: 200,\n  body: ''\n}).as('getClientImplementations');\ncy.visit('/', {\n  timeout: 120000\n});\ncy.wait('@getaccount');\ncy.viewport(999, 660);\ncy.viewport(1000, 660);\ncy.findByText('CypressHeadOfHouse').should('be.visible');\ncy.findByText('CypressSpouse').should('be.visible');\ncy.findByText('CypressChild First').should('be.visible');\ncy.findByText('CypressChild Second').should('be.visible');\ncy.findByText('CypressChild Third').should('be.visible');\ncy.findByText('CypressChild Fourth').should('be.visible');\ncy.findByText('CypressChild Fifth').should('be.visible');\ncy.findByText('CypressChild Sixth').should('be.visible');\ncy.findByText('CypressChild Seventh').should('not.be.visible');\ncy.findByText('CypressChild Eighth').should('not.be.visible'); // get the right arrow that scrolls through the family members\n// click twice to get all the way to the right\ncy.get('i.bds-icon.bds-chevron-right').click();\ncy.findByText('CypressHeadOfHouse').should('not.be.visible');\ncy.findByText('CypressSpouse').should('not.be.visible');\ncy.findByText('CypressChild First').should('be.visible');\ncy.findByText('CypressChild Second').should('be.visible');\ncy.findByText('CypressChild Third').should('be.visible');\ncy.findByText('CypressChild Fourth').should('be.visible');\ncy.findByText('CypressChild Fifth').should('be.visible');\ncy.findByText('CypressChild Sixth').should('be.visible');\ncy.findByText('CypressChild Seventh').should('be.visible');\ncy.findByText('CypressChild Eighth').should('be.visible'); // get the left arrow that scrolls through the family members\n// click twice to get all the way to the left\ncy.get('i.bds-icon.bds-chevron-left').click();\ncy.findByText('CypressHeadOfHouse').should('be.visible');\ncy.findByText('CypressSpouse').should('be.visible');\ncy.findByText('CypressChild First').should('be.visible');\ncy.findByText('CypressChild Second').should('be.visible');\ncy.findByText('CypressChild Third').should('be.visible');\ncy.findByText('CypressChild Fourth').should('be.visible');\ncy.findByText('CypressChild Fifth').should('be.visible');\ncy.findByText('CypressChild Sixth').should('be.visible');\ncy.findByText('CypressChild Seventh').should('not.be.visible');\ncy.findByText('CypressChild Eighth').should('not.be.visible');",
+              "err": {}
+            }
+          ],
+          "passes": [
+            "acb77cb6-d620-4134-b54d-e3644f32db7d"
+          ],
+          "failures": [
+            "0dc2d3bd-eb74-43c0-9348-e14ad58f5f1e"
+          ]
+        }
+      ]
+    }
+  ]
+}
