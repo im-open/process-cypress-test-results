@@ -4,13 +4,12 @@ const timezone = core.getInput('timezone') || 'Etc/UTC';
 const formatDistance = require('date-fns/formatDistance');
 
 function getMarkupForJson(jsonResults, reportName, truncatedMarkup = false) {
-  return `
-# ${reportName}
+  return `# ${reportName}
+
 ${getBadge(jsonResults.stats)}
 ${getTestTimes(jsonResults.stats)}
 ${getTestCounters(jsonResults.stats)}
-${getTestResultsMarkup(jsonResults.results, reportName, truncatedMarkup)}
-  `;
+${getFailedAndEmptyTestResultsMarkup(jsonResults.results, reportName, truncatedMarkup)}`;
 }
 
 function getBadge(stats) {
@@ -18,8 +17,7 @@ function getBadge(stats) {
   const passedCount = stats.passes;
   const totalCount = stats.tests;
 
-  const badgeCountText =
-    failedCount > 0 ? `${`${failedCount}/${totalCount}`}` : `${`${passedCount}/${totalCount}`}`;
+  const badgeCountText = failedCount > 0 ? `${`${failedCount}/${totalCount}`}` : `${`${passedCount}/${totalCount}`}`;
   const badgeStatusText = failedCount > 0 ? 'FAILED' : 'PASSED';
   const badgeColor = failedCount > 0 ? 'red' : 'brightgreen';
 
@@ -42,9 +40,8 @@ function getTestTimes(stats) {
     includeSeconds: true
   });
 
-  return `
-<details>  
-  <summary> Duration: ${duration} </summary>
+  return `<details>
+  <summary>Duration: ${duration}</summary>
   <table>
     <tr>
       <th>Start:</th>
@@ -52,11 +49,10 @@ function getTestTimes(stats) {
     </tr>
     <tr>
       <th>Finish:</th>
-      <td><code>${formatDate(endDate)}</code></td>    
+      <td><code>${formatDate(endDate)}</code></td>
     </tr>
   </table>
-</details>
-  `;
+</details>`;
 }
 
 function getTestCounters(stats) {
@@ -65,9 +61,8 @@ function getTestCounters(stats) {
   extraProps += getTableRowIfHasValue('Other:', stats.other);
   extraProps += getTableRowIfHasValue('skipped:', stats.skipped);
   let outcome = stats.failures > 0 ? 'Failed' : 'Passed';
-  return `
-<details>
-  <summary> Outcome: ${outcome} | Total Tests: ${stats.tests} | Passed: ${stats.passes} | Failed: ${stats.failures} </summary>
+  return `<details>
+  <summary>Outcome: ${outcome} | Total Tests: ${stats.tests} | Passed: ${stats.passes} | Failed: ${stats.failures}</summary>
   <table>
     <tr>
       <th>Total Test Suites:</th>
@@ -83,20 +78,18 @@ function getTestCounters(stats) {
     </tr>
     <tr>
       <th>Failed Tests:</th>
-      <td>${stats.failures}</td>    
+      <td>${stats.failures}</td>
     </tr>
     <tr>
       <th>Passed Tests:</th>
-      <td>${stats.passes}</td>    
+      <td>${stats.passes}</td>
     </tr>
     <tr>
       <th>Passed Percentage:</th>
-      <td>${stats.passPercent}%</td>    
+      <td>${stats.passPercent}%</td>
     </tr>${extraProps}
   </table>
-</details>
-
-  `;
+</details>`;
 }
 
 function getTableRowIfHasValue(heading, data) {
@@ -110,7 +103,7 @@ function getTableRowIfHasValue(heading, data) {
   return '';
 }
 
-function getTestResultsMarkup(results, reportName, truncatedMarkup = false) {
+function getFailedAndEmptyTestResultsMarkup(results, reportName, truncatedMarkup = false) {
   let resultsMarkup = '';
 
   if (!results || results.length === 0) {
@@ -135,9 +128,9 @@ function getTestResultsMarkup(results, reportName, truncatedMarkup = false) {
 function getNoResultsMarkup(reportName) {
   const testResultIcon = ':grey_question:';
   const resultsMarkup = `
-  ## ${testResultIcon} ${reportName}
-  There were no test results to report.
-  `;
+## ${testResultIcon} ${reportName}
+There were no test results to report.
+`;
   return resultsMarkup;
 }
 
@@ -147,58 +140,55 @@ function getFailedTestMarkup(failedTest, suiteName, truncatedMarkup = false) {
   let icon = failedTest.state === 'failed' ? ':x:' : ':grey_question:';
   let failTestMarkdown;
   if (truncatedMarkup) {
-    failTestMarkdown = `
-    <details>
-      <summary>${icon} ${failedTest.fullTitle}</summary>
-       - <b>Suite:</b> ${suiteName} <br/>
-       - <b>Title:</b>  ${failedTest.title} <br/>
-       - <b>State:</b>  ${failedTest.state} <br/>
-       - <b>Status:</b> ${failedTest.status} <br/>
-      ...truncated
-    </details>   
-    `;
+    failTestMarkdown = `<details>
+  <summary>${icon} ${failedTest.fullTitle}</summary>
+  - <b>Suite: </b>${suiteName}<br/>
+  - <b>Title: </b>${failedTest.title}<br/>
+  - <b>State: </b>${failedTest.state}<br/>
+  - <b>Status: </b>${failedTest.status}<br/>
+</details>
+`;
   } else {
-    failTestMarkdown = `
-  <details>
-    <summary>${icon} ${failedTest.fullTitle}</summary>    
-    <table>
-      <tr>
-        <th>Suite:</th>
-        <td><code>${suiteName}</code></td>
-      </tr>
-      <tr>
-        <th>Title:</th>
-        <td><code>${failedTest.title}</code></td>
-      </tr>
-      <tr>
-        <th>State:</th>
-        <td><code>${failedTest.state}</code></td>
-      </tr>
-      <tr>
-        <th>Duration:</th>
-        <td><code>${failedTest.duration}</code></td>
-      </tr>
-      <tr>
-        <th>Status:</th>
-        <td><code>${failedTest.status}</code></td>
-      </tr>
-      <tr>
-        <th>Speed:</th>
-        <td><code>${failedTest.speed || 'N/A'}</code></td>
-      </tr>
-      <tr>
-        <th>Code:</th>
-        <td><code>${failedTest.code}</code></td>
-      </tr>
-      <tr>
-        <th>Failure Messages:</th>
-        <td><pre>${failedTest.err.estack}</pre></td>
-      </tr>
-    </table>
-  </details>
-    `;
+    failTestMarkdown = `<details>
+  <summary>${icon} ${failedTest.fullTitle}</summary>
+  <table>
+    <tr>
+      <th>Suite:</th>
+      <td><code>${suiteName}</code></td>
+    </tr>
+    <tr>
+      <th>Title:</th>
+      <td><code>${failedTest.title}</code></td>
+    </tr>
+    <tr>
+      <th>State:</th>
+      <td><code>${failedTest.state}</code></td>
+    </tr>
+    <tr>
+      <th>Duration:</th>
+      <td><code>${failedTest.duration}</code></td>
+    </tr>
+    <tr>
+      <th>Status:</th>
+      <td><code>${failedTest.status}</code></td>
+    </tr>
+    <tr>
+      <th>Speed:</th>
+      <td><code>${failedTest.speed || 'N/A'}</code></td>
+    </tr>
+    <tr>
+      <th>Code:</th>
+      <td><code>${failedTest.code}</code></td>
+    </tr>
+    <tr>
+      <th>Failure Messages:</th>
+      <td><pre>${failedTest.err.estack}</pre></td>
+    </tr>
+  </table>
+</details>
+`;
   }
-  return failTestMarkdown.trim();
+  return failTestMarkdown;
 }
 
 module.exports = {
