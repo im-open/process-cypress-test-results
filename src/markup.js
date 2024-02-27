@@ -121,7 +121,7 @@ function getFailedAndEmptyTestResultsMarkup(results, reportName, truncatedMarkup
         resultsMarkup += getFailedTestMarkup(failedTest, suiteName, truncatedMarkup);
       });
     });
-    return resultsMarkup.trim();
+    return resultsMarkup;
   }
 }
 

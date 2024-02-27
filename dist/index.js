@@ -18982,7 +18982,6 @@ var require_utils3 = __commonJS({
         }
         return JSON.parse(rawJson);
       } else {
-        console.log('File does not exist');
         core2.setFailed(
           `The results file '${resultsFile2}' does not exist.  No status check or PR comment will be created.`
         );
@@ -18990,7 +18989,8 @@ var require_utils3 = __commonJS({
       }
     }
     function areThereAnyFailingTests2(json) {
-      core2.info(`Checking for failing tests..`);
+      core2.info(`
+Checking for failing tests..`);
       if (json.stats.failures > 0) {
         core2.warning(`At least one failing test was found.`);
         return true;
@@ -19000,7 +19000,8 @@ var require_utils3 = __commonJS({
     }
     function createResultsFile2(results, jobAndStep2) {
       const resultsFileName = `test-results-${jobAndStep2}.md`;
-      core2.info(`Writing results to ${resultsFileName}`);
+      core2.info(`
+Writing results to ${resultsFileName}`);
       let resultsFilePath = null;
       fs2.writeFile(resultsFileName, results, err => {
         if (err) {
@@ -37260,7 +37261,7 @@ ${getFailedAndEmptyTestResultsMarkup(jsonResults.results, reportName2, truncated
             resultsMarkup += getFailedTestMarkup(failedTest, suiteName, truncatedMarkup);
           });
         });
-        return resultsMarkup.trim();
+        return resultsMarkup;
       }
     }
     function getNoResultsMarkup(reportName2) {
@@ -37354,13 +37355,10 @@ var commentIdentifier = core.getInput('comment-identifier') || jobAndStep;
 async function run() {
   try {
     const resultsJson = await readJsonResultsFromFile(resultsFile);
-    console.log('going to check json');
     if (!resultsJson) {
-      console.log('json checked');
       core.setOutput('test-outcome', 'Failed');
       return;
     }
-    console.log('json not checked?');
     const failingTestsFound = areThereAnyFailingTests(resultsJson);
     core.setOutput('test-outcome', failingTestsFound ? 'Failed' : 'Passed');
     const markupData = getMarkupForJson(resultsJson, reportName);

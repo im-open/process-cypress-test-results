@@ -14,14 +14,13 @@ async function readJsonResultsFromFile(resultsFile) {
     }
     return JSON.parse(rawJson);
   } else {
-    console.log('File does not exist');
     core.setFailed(`The results file '${resultsFile}' does not exist.  No status check or PR comment will be created.`);
     return;
   }
 }
 
 function areThereAnyFailingTests(json) {
-  core.info(`Checking for failing tests..`);
+  core.info(`\nChecking for failing tests..`);
 
   if (json.stats.failures > 0) {
     core.warning(`At least one failing test was found.`);
@@ -35,7 +34,7 @@ function areThereAnyFailingTests(json) {
 function createResultsFile(results, jobAndStep) {
   const resultsFileName = `test-results-${jobAndStep}.md`;
 
-  core.info(`Writing results to ${resultsFileName}`);
+  core.info(`\nWriting results to ${resultsFileName}`);
   let resultsFilePath = null;
 
   fs.writeFile(resultsFileName, results, err => {

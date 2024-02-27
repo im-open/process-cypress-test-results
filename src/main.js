@@ -23,13 +23,10 @@ const commentIdentifier = core.getInput('comment-identifier') || jobAndStep;
 async function run() {
   try {
     const resultsJson = await readJsonResultsFromFile(resultsFile);
-    console.log('going to check json');
     if (!resultsJson) {
-      console.log('json checked');
       core.setOutput('test-outcome', 'Failed');
       return;
     }
-    console.log('json not checked?');
 
     const failingTestsFound = areThereAnyFailingTests(resultsJson);
     core.setOutput('test-outcome', failingTestsFound ? 'Failed' : 'Passed');
