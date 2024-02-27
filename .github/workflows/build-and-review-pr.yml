@@ -21,6 +21,13 @@ on:
   #   without disabling that requirement.  If we have a status check that is always produced,
   #   we can also use that to require all branches be up to date before they are merged.
 
+env:
+  EMPTY_JSON_RESULTS_FILE: './test/input-files/empty-results.json'
+  FAILING_JSON_RESULTS_FILE: './test/input-files/failing.json'
+  NO_TESTS_JSON_RESULTS_FILE: './test/input-files/no-tests.json'
+  PASSING_JSON_RESULTS_FILE: './test/input-files/passing.json'
+  TRUNCATE_JSON_RESULTS_FILE: './test/input-files/truncate.json'
+
 jobs:
   build-and-review-pr:
     # This reusable workflow will check to see if an action's source code has changed based on
