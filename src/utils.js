@@ -14,15 +14,13 @@ async function readJsonResultsFromFile(resultsFile) {
     }
     return JSON.parse(rawJson);
   } else {
-    core.setFailed(
-      `The results file '${resultsFile}' does not exist.  No status check or PR comment will be created.`
-    );
+    core.setFailed(`The results file '${resultsFile}' does not exist.  No status check or PR comment will be created.`);
     return;
   }
 }
 
 function areThereAnyFailingTests(json) {
-  core.info(`Checking for failing tests..`);
+  core.info(`\nChecking for failing tests..`);
 
   if (json.stats.failures > 0) {
     core.warning(`At least one failing test was found.`);
@@ -33,26 +31,26 @@ function areThereAnyFailingTests(json) {
   return false;
 }
 
-function createOutcomeFile(outcomeFileName, markupData) {
-  core.info(`Writing outcome to ${outcomeFileName}`);
-  let outcomeFilePath = null;
+function createResultsFile(results, jobAndStep) {
+  const resultsFileName = `test-results-${jobAndStep}.md`;
 
-  fs.writeFile(outcomeFileName, markupData, err => {
+  core.info(`\nWriting results to ${resultsFileName}`);
+  let resultsFilePath = null;
+
+  fs.writeFile(resultsFileName, results, err => {
     if (err) {
-      core.info(`Error writing markupData to file. Error: ${err}`);
+      core.info(`Error writing results to file. Error: ${err}`);
     } else {
-      core.info('Successfully created outcome file.');
-      core.info(`File: ${outcomeFileName}`);
+      core.info('Successfully created results file.');
+      core.info(`File: ${resultsFileName}`);
     }
   });
-  outcomeFilePath = path.resolve(outcomeFileName);
-  core.exportVariable('TEST_OUTCOME_FILE_PATH', outcomeFilePath);
-
-  return outcomeFilePath;
+  resultsFilePath = path.resolve(resultsFileName);
+  return resultsFilePath;
 }
 
 module.exports = {
   readJsonResultsFromFile,
   areThereAnyFailingTests,
-  createOutcomeFile
+  createResultsFile
 };

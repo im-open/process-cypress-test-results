@@ -1,0 +1,30 @@
+{
+  "stats": {
+    "suites": 0,
+    "tests": 0,
+    "passes": 0,
+    "pending": 0,
+    "failures": 0,
+    "testsRegistered": 0,
+    "passPercent": 0,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false,
+    "start": "2024-02-27T20:25:44.651Z",
+    "end": "2024-02-27T20:26:27.991Z",
+    "duration": 43340
+  },
+  "results": [
+    {
+      "suites": [
+        {
+          "tests": [],
+          "passes": [],
+          "failures": []
+        }
+      ]
+    }
+  ]
+}
