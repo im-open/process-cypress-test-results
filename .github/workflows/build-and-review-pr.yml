@@ -41,12 +41,12 @@ jobs:
     # This workflow assumes:
     #  - The main README.md is at the root of the repo
     #  - The README contains a contribution guidelines and usage examples section
-    uses: im-open/.github/.github/workflows/reusable-build-and-review-pr.yml@v1.1.1
+    uses: im-open/.github/.github/workflows/reusable-build-and-review-pr.yml@git-status
     with:
       action-name: ${{ github.repository }}
       default-branch: main
       readme-name: 'README.md'
-      node-version: 16
+      node-version: 20
 
       # The id of the contribution guidelines section of the README.md
       readme-contribution-id: '#contributing'
