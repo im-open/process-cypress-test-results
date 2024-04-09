@@ -41,7 +41,7 @@ jobs:
     # This workflow assumes:
     #  - The main README.md is at the root of the repo
     #  - The README contains a contribution guidelines and usage examples section
-    uses: im-open/.github/.github/workflows/reusable-build-and-review-pr.yml@git-status
+    uses: im-open/.github/.github/workflows/reusable-build-and-review-pr.yml@v1
     with:
       action-name: ${{ github.repository }}
       default-branch: main

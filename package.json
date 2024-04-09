@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm ci && npm run bundle && npm run format",
-    "bundle": "esbuild ./src/main.js --bundle --platform=node --outfile=dist/index.js",
+    "bundle": "esbuild ./src/main.js --bundle --platform=node --outfile=dist/index.js --tsconfig-raw=\"{}\"",
     "format": "prettier --write **/*.js",
     "format-check": "prettier --check **/*.js"
   },
