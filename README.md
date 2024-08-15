@@ -127,7 +127,7 @@ A step by step tutorial that sets up *mochawesome* can be found on [Test reporti
 ```yml
 jobs:
   advanced-cypress:
-    runs-on: [windows-2019]
+    runs-on: im-windows
     permissions:
       contents: read
       checks: write
